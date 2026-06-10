@@ -191,4 +191,24 @@ while True:
                 (12, 68), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 150), 2)
 
     if pinch_px is not None:
-        pinch_label = "PI
+        pinch_label = "PINCHED" if pinch_px < 40 else f"{pinch_px}px"
+        cv2.putText(frame, f"Pinch: {pinch_label}",
+                    (12, 101), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
+
+    cv2.putText(frame, "Q = quit",
+                (12, 125), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (160, 160, 160), 1)
+
+    cv2.imshow("HandPilot - Control", frame)
+
+    with tello_lock:
+        if tello_frame is not None:
+            cv2.imshow("HandPilot - Drone View", tello_frame)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        if not landed:
+            tello.land()
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+tello.streamoff()
